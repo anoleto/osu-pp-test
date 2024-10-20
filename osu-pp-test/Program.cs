@@ -70,7 +70,7 @@ namespace osu_pp_test
                             $"[{score.Hit300}/{score.Hit100}/{score.Hit50}/{score.HitMiss}]");
                     }
                 }
-                else { Console.Clear(); }
+                else if (data.OsuStatus != OsuMemoryStatus.ResultsScreen){ Console.Clear(); }
             }
         }
 
