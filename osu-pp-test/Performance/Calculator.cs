@@ -29,7 +29,7 @@ namespace osu_pp_test.Performance
                 mapPath,
                 (uint)score.Mode,
                 (uint)score.Mods.Value,
-                score.Combo,
+                score.MaxCombo,
                 accuracy,
                 score.HitMiss,
                 Optionu32.FromNullable((uint?)Program.TotalHits)

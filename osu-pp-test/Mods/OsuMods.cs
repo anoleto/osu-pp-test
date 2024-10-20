@@ -47,7 +47,7 @@ namespace osu_pp_test.Mods
             Mods mods = (Mods)modValue;
             return string.Join(", ", Enum.GetValues(typeof(Mods))
                 .OfType<Mods>()
-                .Where(mod => mods.HasFlag(mod))
+                .Where(mod => mods.HasFlag(mod) && mod != Mods.None)
                 .Select(mod => mod.ToString()));
         }
     }

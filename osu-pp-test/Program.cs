@@ -41,7 +41,7 @@ namespace osu_pp_test
                 var beatmap = new CurrentBeatmap();
                 var score = new Player();
 
-                if (!osuReader.TryRead(data) || data.OsuStatus != OsuMemoryStatus.Playing)
+                if (!osuReader.TryRead(data))
                 {
                     Console.Clear();
                     Thread.Sleep(3000);
@@ -49,27 +49,35 @@ namespace osu_pp_test
                     continue;
                 }
 
-                if (osuReader.TryRead(beatmap) && osuReader.TryRead(score))
+                osuReader.TryRead(beatmap);
+                osuReader.TryRead(score);
+                mapParser.GetFilename(beatmap);
+
+                string mapName = beatmap.OsuFileName.Replace(".osu", "");
+
+                if (data.OsuStatus == OsuMemoryStatus.Playing)
                 {
-                    mapParser.GetFilename(beatmap);
-                    var ppCalc = new CalculateScore(mapParser.GetFilename(beatmap), data.Mods);
                     getTotalHits(score);
+                    var ppCalc = new CalculateScore(mapParser.GetFilename(beatmap), data.Mods);
                     pp = System.Math.Round(ppCalc?.getPerformance(score) ?? 0, 2);
                     if (pp != lastPP)
                     {
                         lastPP = pp;
-                        UpdateConsole(pp, data.Mods);
+                        string mods = data.Mods > 0
+                                ? OsuMods.getMods(data.Mods)
+                                : "No Mod";
+                        UpdateConsole($"{mapName}\nCurrent pp: {pp}\nMods: {mods}\n" +
+                            $"[{score.Hit300}/{score.Hit100}/{score.Hit50}/{score.HitMiss}]");
                     }
-
-                    Thread.Sleep(300);
                 }
+                else { Console.Clear(); }
             }
         }
 
-        private static void UpdateConsole(double currentPP, int mods)
+        private static void UpdateConsole(string text)
         {
-            Console.Clear();
-            Console.WriteLine($"Current pp: {currentPP}\nMods: {OsuMods.getMods(mods)}");
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine(text);
         }
 
         private static void getTotalHits(Player play) =>
